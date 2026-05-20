@@ -86,6 +86,7 @@ This project is built from scratch using synthetic data and generic engineering 
 - [ ] Camera lab
 - [x] Docker Compose setup
 - [ ] Screenshots and demo video
+- [ ] Cloud infrastructure deployment plan
 
 ## Portfolio Summary
 

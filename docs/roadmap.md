@@ -53,3 +53,18 @@
 - demo GIF/video
 - API docs
 - recruiter-friendly project summary
+
+## Future - Cloud Infrastructure
+
+Explore a small production-style cloud deployment path to strengthen the portfolio story:
+
+- containerized backend deployment
+- managed Postgres database
+- object storage for camera snapshots and exported reports
+- frontend hosting with preview deployments
+- secrets and environment management
+- observability with logs, metrics, and basic alerting
+- infrastructure-as-code using Terraform, Pulumi, or provider-native templates
+- CI/CD pipeline that runs tests, builds images, and deploys to a staging environment
+
+Potential implementation options include AWS, Azure, GCP, Fly.io, Render, Railway, or Vercel plus a managed database. The goal is not heavy infrastructure for its own sake, but a clear demonstration of deployable full-stack engineering, cloud fundamentals, and operational thinking.
