@@ -11,52 +11,56 @@
 
 ## Milestone 2 - Synthetic Rig Simulator
 
-- seeded readings
-- fault modes
-- persisted readings
-- latest/history endpoints
+- [x] seeded readings
+- [x] fault modes
+- [x] persisted readings
+- [x] latest/history endpoints
 
 ## Milestone 3 - Dashboard
 
-- live status
-- latest readings
-- time-series charts
-- rig controls
+- [x] live status
+- [x] latest readings
+- [x] time-series charts
+- [x] rig controls
+- [x] multi-page operational workspace
+- [x] 1.0 walkthrough flow
 
 ## Milestone 4 - Rules-Based Anomaly Detection
 
-- thresholds
-- drift and dropout checks
-- alert records
+- [x] thresholds
+- [x] drift and dropout checks
+- [x] alert records
 
 ## Milestone 5 - ML Anomaly Detection
 
-- IsolationForest baseline
-- anomaly scores
-- rules versus ML comparison
+- [x] IsolationForest baseline
+- [x] anomaly scores
+- [x] rules versus ML comparison
 
 ## Milestone 6 - Human Review
 
-- review queue
-- labels and notes
-- reviewed/unreviewed counts
+- [x] review queue
+- [x] labels and notes
+- [x] reviewed/unreviewed counts
 
 ## Milestone 7 - Camera Lab
 
-- optional OpenCV capture
-- frame/status route
-- dashboard camera panel
+- [x] disabled-by-default local status route
+- [x] optional snapshot endpoint with unavailable state
+- [x] dashboard camera panel
 
 ## Milestone 8 - Portfolio Polish
 
-- screenshots
-- demo GIF/video
-- API docs
-- recruiter-friendly project summary
+- [x] demo media capture guide
+- [x] API docs via FastAPI OpenAPI
+- [x] recruiter-friendly project summary
+- [x] JSON run report export
+- [x] release checklist
+- [x] current CI includes backend checks, frontend build, Docker service builds, and Docker smoke checks
 
 ## Future - Cloud Infrastructure
 
-Explore a small production-style cloud deployment path to strengthen the portfolio story:
+The 1.0 release documents a small production-style cloud deployment path to strengthen the portfolio story:
 
 - containerized backend deployment
 - managed Postgres database
