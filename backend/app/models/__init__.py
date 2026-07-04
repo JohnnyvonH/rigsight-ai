@@ -72,6 +72,11 @@ class Alert(Base):
     threshold_value: Mapped[float | None] = mapped_column(Float, nullable=True)
     anomaly_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     ml_is_anomaly: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    explanation: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    recommended_action: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    triggered_metric: Mapped[str] = mapped_column(String(80), nullable=False, default="")
+    expected_range: Mapped[str] = mapped_column(String(120), nullable=False, default="")
+    actual_value: Mapped[str] = mapped_column(String(120), nullable=False, default="")
     review_status: Mapped[str] = mapped_column(String(32), nullable=False, default="unreviewed")
     review_notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
     assigned_to: Mapped[str] = mapped_column(String(120), nullable=False, default="")
@@ -81,3 +86,19 @@ class Alert(Base):
 
     run: Mapped[TestRun] = relationship(back_populates="alerts")
     reading: Mapped[Reading] = relationship(back_populates="alerts")
+
+
+class AlertThreshold(Base):
+    __tablename__ = "alert_thresholds"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    organization_id: Mapped[str] = mapped_column(String(80), nullable=False, default="demo-org")
+    rig_id: Mapped[str] = mapped_column(String(80), nullable=False, default="synthetic-rig-01")
+    temperature_high_c: Mapped[float] = mapped_column(Float, nullable=False, default=82.0)
+    temperature_critical_c: Mapped[float] = mapped_column(Float, nullable=False, default=90.0)
+    temperature_drift_c: Mapped[float] = mapped_column(Float, nullable=False, default=3.0)
+    vibration_high_mm_s: Mapped[float] = mapped_column(Float, nullable=False, default=4.0)
+    rpm_dropout: Mapped[float] = mapped_column(Float, nullable=False, default=50.0)
+    torque_dropout_nm: Mapped[float] = mapped_column(Float, nullable=False, default=5.0)
+    current_high_a: Mapped[float] = mapped_column(Float, nullable=False, default=38.0)
+    voltage_low_v: Mapped[float] = mapped_column(Float, nullable=False, default=394.0)

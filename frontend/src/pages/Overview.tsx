@@ -34,19 +34,19 @@ export function Overview() {
       />
 
       <section className="overview-grid">
-        <StatusPanel
-          error={data.error}
-          health={data.health}
-          isOnline={data.isOnline}
-          onRefresh={() => data.loadTelemetry()}
-          sampleCount={data.history.length}
-        />
         <RunSummary
           faultCount={faultCount}
           latestFault={data.latestFault}
           latestReading={data.latestReading}
           run={data.currentRun}
           runCount={data.runs.length}
+        />
+        <StatusPanel
+          error={data.error}
+          health={data.health}
+          isOnline={data.isOnline}
+          onRefresh={() => data.loadTelemetry()}
+          sampleCount={data.history.length}
         />
       </section>
 

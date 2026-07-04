@@ -41,19 +41,17 @@ export function ReviewQueue({
           <dl className="review-detail-list">
             <div>
               <dt>Why flagged</dt>
+              <dd>{alert.explanation || `ML score ${formatScore(alert.anomaly_score)}`}</dd>
+            </div>
+            <div>
+              <dt>Action</dt>
+              <dd>{alert.recommended_action || "Review linked telemetry."}</dd>
+            </div>
+            <div>
+              <dt>Rig / Reviewer</dt>
               <dd>
-                {alert.threshold_value !== null
-                  ? `Observed ${alert.observed_value} exceeded ${alert.threshold_value}`
-                  : `ML score ${formatScore(alert.anomaly_score)}`}
+                {alert.rig_id} / {alert.reviewed_by || "Unassigned"}
               </dd>
-            </div>
-            <div>
-              <dt>Rig</dt>
-              <dd>{alert.rig_id}</dd>
-            </div>
-            <div>
-              <dt>Reviewer</dt>
-              <dd>{alert.reviewed_by || "Unassigned"}</dd>
             </div>
           </dl>
           <label className="assignee-control">

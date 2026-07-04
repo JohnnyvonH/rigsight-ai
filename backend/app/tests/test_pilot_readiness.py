@@ -100,3 +100,56 @@ def test_html_report_endpoint_is_browser_printable() -> None:
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
     assert "RigSight AI Run Report" in response.text
+
+
+def test_thresholds_can_be_updated_and_reset() -> None:
+    with TestClient(create_app()) as client:
+        update_response = client.patch(
+            "/api/v1/thresholds",
+            json={
+                "rig_id": "synthetic-rig-01",
+                "temperature_high_c": 75,
+                "vibration_high_mm_s": 3.2,
+            },
+        )
+        read_response = client.get("/api/v1/thresholds?rig_id=synthetic-rig-01")
+        reset_response = client.post(
+            "/api/v1/thresholds/reset", json={"rig_id": "synthetic-rig-01"}
+        )
+
+    assert update_response.status_code == 200
+    assert update_response.json()["thresholds"]["temperature_high_c"] == 75
+    assert read_response.json()["thresholds"]["vibration_high_mm_s"] == 3.2
+    assert reset_response.json()["thresholds"]["temperature_high_c"] == 82
+
+
+def test_alert_recalculation_uses_configured_thresholds_and_preserves_ml_alerts() -> None:
+    with TestClient(create_app()) as client:
+        reset_response = client.post("/demo/reset", json={"scenario": "normal-baseline"})
+        run_id = reset_response.json()["run"]["id"]
+        before_response = client.get(f"/api/v1/alerts?run_id={run_id}&detection_source=ml")
+        client.patch(
+            "/api/v1/thresholds",
+            json={"rig_id": "synthetic-rig-01", "temperature_high_c": 65},
+        )
+        recalc_response = client.post(f"/api/v1/runs/{run_id}/alerts/recalculate")
+        after_response = client.get(f"/api/v1/alerts?run_id={run_id}&detection_source=rules")
+        client.post("/api/v1/thresholds/reset", json={"rig_id": "synthetic-rig-01"})
+
+    assert before_response.status_code == 200
+    assert recalc_response.status_code == 200
+    assert recalc_response.json()["ml_count"] == before_response.json()["total_count"]
+    assert after_response.json()["total_count"] > 0
+    assert after_response.json()["alerts"][0]["explanation"]
+    assert after_response.json()["alerts"][0]["recommended_action"]
+
+
+def test_pdf_report_endpoint_returns_pdf() -> None:
+    with TestClient(create_app()) as client:
+        reset_response = client.post("/demo/reset", json={"scenario": "baseline-with-seeded-faults"})
+        run_id = reset_response.json()["run"]["id"]
+        response = client.get(f"/api/v1/reports/run/{run_id}/pdf")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content.startswith(b"%PDF")

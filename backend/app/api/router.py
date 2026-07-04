@@ -9,6 +9,7 @@ from app.api import (
     routes_reports,
     routes_review,
     routes_runs,
+    routes_thresholds,
 )
 
 api_router = APIRouter()
@@ -20,6 +21,7 @@ for router in (
     routes_alerts.router,
     routes_runs.router,
     routes_review.router,
+    routes_thresholds.router,
     routes_camera.router,
     routes_demo.router,
     routes_reports.router,

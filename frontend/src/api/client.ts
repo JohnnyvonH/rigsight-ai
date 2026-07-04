@@ -79,6 +79,11 @@ export type AlertRecord = {
   threshold_value: number | null;
   anomaly_score: number | null;
   ml_is_anomaly: boolean;
+  explanation: string;
+  recommended_action: string;
+  triggered_metric: string;
+  expected_range: string;
+  actual_value: string;
   review_status: "unreviewed" | "confirmed" | "dismissed" | "needs_followup" | string;
   review_notes: string;
   assigned_to: string;
@@ -146,6 +151,8 @@ export type CameraStatusResponse = {
 export type RunReportResponse = {
   run: TestRun;
   latest_reading: Reading | null;
+  top_alerts: AlertRecord[];
+  thresholds: ThresholdProfile;
   summary: {
     reading_count: number;
     alert_count: number;
@@ -156,6 +163,53 @@ export type RunReportResponse = {
     ml_count: number;
   };
   clean_room_note: string;
+};
+
+export type IngestReadingInput = {
+  timestamp: string;
+  phase?: string;
+  rpm: number;
+  torque_nm: number;
+  temperature_c: number;
+  vibration_mm_s: number;
+  current_a: number;
+  voltage_v: number;
+  pressure_bar: number;
+  fault_mode?: string | null;
+};
+
+export type IngestRunRequest = {
+  name: string;
+  rig_id: string;
+  description: string;
+  readings: IngestReadingInput[];
+};
+
+export type IngestRunResponse = {
+  run: TestRun;
+  readings_created: number;
+  alerts_created: number;
+};
+
+export type ThresholdProfile = {
+  organization_id: string;
+  rig_id: string;
+  temperature_high_c: number;
+  temperature_critical_c: number;
+  temperature_drift_c: number;
+  vibration_high_mm_s: number;
+  rpm_dropout: number;
+  torque_dropout_nm: number;
+  current_high_a: number;
+  voltage_low_v: number;
+  persisted: boolean;
+};
+
+export type ThresholdUpdate = Omit<ThresholdProfile, "organization_id" | "persisted">;
+
+export type ThresholdResponse = {
+  thresholds: ThresholdProfile;
+  created?: boolean;
 };
 
 export function getHealth(init?: RequestInit): Promise<HealthResponse> {
@@ -228,6 +282,53 @@ export function getRunReport(runId: number, init?: RequestInit): Promise<RunRepo
 
 export function getRunReportHtmlUrl(runId: number): string {
   return `${API_BASE_URL}/reports/run/${runId}/html`;
+}
+
+export function getRunReportPdfUrl(runId: number): string {
+  return `${API_BASE_URL}/reports/run/${runId}/pdf`;
+}
+
+export function ingestReadings(payload: IngestRunRequest): Promise<IngestRunResponse> {
+  return fetchJson<IngestRunResponse>("/readings/ingest", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getThresholds(rigId: string, init?: RequestInit): Promise<ThresholdResponse> {
+  return fetchJson<ThresholdResponse>(`/thresholds?rig_id=${encodeURIComponent(rigId)}`, init);
+}
+
+export function updateThresholds(payload: ThresholdUpdate): Promise<ThresholdResponse> {
+  return fetchJson<ThresholdResponse>("/thresholds", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function resetThresholds(rigId: string): Promise<ThresholdResponse> {
+  return fetchJson<ThresholdResponse>("/thresholds/reset", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ rig_id: rigId }),
+  });
+}
+
+export function recalculateRunAlerts(runId: number): Promise<{ rules_count: number; ml_count: number }> {
+  return fetchJson<{ rules_count: number; ml_count: number }>(
+    `/runs/${runId}/alerts/recalculate`,
+    {
+      method: "POST",
+    },
+  );
 }
 
 export function updateAlertReview(
