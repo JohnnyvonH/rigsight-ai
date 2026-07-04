@@ -5,9 +5,16 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    app_version: str = "1.0.0"
     app_env: str = "development"
     database_url: str = "sqlite:///./rigsight.db"
     backend_cors_origins: str = "http://localhost:5173"
+    camera_enabled: bool = False
+    camera_device_index: int = 0
+    pilot_api_key: str = ""
+    pilot_organization_id: str = "demo-org"
+    pilot_organization_name: str = "RigSight Pilot Workspace"
+    telemetry_upload_enabled: bool = True
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
