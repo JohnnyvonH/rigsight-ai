@@ -1,0 +1,13 @@
+timestamp,rpm,torque_nm,temperature_c,vibration_mm_s,current_a,voltage_v,pressure_bar,phase,fault_mode,rig_id,run_name,description
+2026-07-04T18:00:00Z,1198,185,64.8,1.42,25.1,400.8,7.1,warmup,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:01:00Z,1202,188,65.2,1.45,25.3,400.6,7.1,warmup,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:02:00Z,1210,190,66.4,1.52,25.8,400.4,7.2,steady_state,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:03:00Z,1206,192,68.1,1.58,26.2,400.2,7.2,steady_state,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:04:00Z,1204,194,71.8,1.76,27.4,399.9,7.3,steady_state,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:05:00Z,1196,199,78.6,2.15,30.2,398.7,7.5,load_step,temperature_drift,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:06:00Z,1192,205,83.4,2.52,32.8,397.5,7.6,load_step,overheating,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:07:00Z,1188,208,86.9,3.91,35.4,396.1,7.7,load_step,vibration_spike,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:08:00Z,1184,204,82.1,4.32,36.9,395.2,7.6,recovery,vibration_spike,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:09:00Z,1195,196,73.3,2.08,29.8,399.2,7.4,recovery,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:10:00Z,1201,189,67.2,1.61,26.6,400.1,7.2,cooldown,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
+2026-07-04T18:11:00Z,1197,184,65.5,1.49,25.4,400.5,7.1,cooldown,,pilot-rig-01,Customer sanitized pilot run,Sanitized sample telemetry for RigSight AI demo import
