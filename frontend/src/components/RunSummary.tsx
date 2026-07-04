@@ -19,11 +19,14 @@ export function RunSummary({
   runCount,
 }: RunSummaryProps) {
   return (
-    <section className="run-panel" id="runs">
+    <section className="run-panel run-panel--primary" id="runs">
       <div className="section-heading">
         <div>
           <p className="eyebrow">Current run</p>
-          <h2>{run?.status ?? "Pending"}</h2>
+          <h2>{run?.name ?? "Active run"}</h2>
+          <span className={`status-pill status-pill--${run?.status ?? "pending"}`}>
+            {run?.status ?? "Pending"}
+          </span>
         </div>
         <Database aria-hidden="true" />
       </div>

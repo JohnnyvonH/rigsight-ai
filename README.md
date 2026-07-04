@@ -24,6 +24,11 @@ Engineering test teams often generate large volumes of telemetry across sensors,
 - Browser-printable HTML run report
 - Versioned `/api/v1` API surface
 - Pilot telemetry ingestion endpoint for sanitized customer samples
+- CSV telemetry import workflow in the frontend
+- Configurable alert thresholds per rig
+- Rules-based alert recalculation after threshold updates
+- PDF run report export
+- Alert explanations and recommended actions
 - Review assignment and audit history fields
 - Health, readiness, and metrics endpoints for deployment checks
 - Optional local camera lab, disabled by default
@@ -65,6 +70,10 @@ Key API routes:
 - `GET /readings/latest`
 - `GET /readings/history?limit=100`
 - `POST /readings/ingest`
+- `GET /thresholds?rig_id=synthetic-rig-01`
+- `PATCH /thresholds`
+- `POST /thresholds/reset`
+- `POST /runs/{run_id}/alerts/recalculate`
 - `GET /alerts?limit=50`
 - `GET /review/queue`
 - `PATCH /review/{alert_id}`
@@ -74,6 +83,7 @@ Key API routes:
 - `GET /camera/status`
 - `GET /reports/run/{run_id}`
 - `GET /reports/run/{run_id}/html`
+- `GET /reports/run/{run_id}/pdf`
 - `GET /ready`
 - `GET /metrics`
 
@@ -106,6 +116,16 @@ Frontend:
 cd frontend
 npm install
 npm run dev
+```
+
+Postgres pilot profile:
+
+```bash
+docker compose --profile postgres up -d postgres
+cd backend
+$env:DATABASE_URL="postgresql+psycopg://rigsight:rigsight@localhost:5432/rigsight"
+alembic upgrade head
+uvicorn app.main:app --reload
 ```
 
 ## Architecture
@@ -156,6 +176,10 @@ This project is built from scratch using synthetic data and generic engineering 
 - [x] Review audit metadata
 - [x] HTML report view
 - [x] Readiness and metrics endpoints
+- [x] CSV import workflow
+- [x] Configurable thresholds
+- [x] PDF report export
+- [x] Postgres migration path
 
 ## Portfolio Summary
 

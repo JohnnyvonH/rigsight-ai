@@ -1,5 +1,6 @@
 import { Database } from "lucide-react";
 
+import { CsvImportPanel } from "../components/CsvImportPanel";
 import { DemoControls } from "../components/DemoControls";
 import { PageHeader } from "../components/PageHeader";
 import { ReportPanel } from "../components/ReportPanel";
@@ -50,6 +51,20 @@ export function Runs() {
       </section>
 
       <section className="content-grid page-card-full">
+        <CsvImportPanel
+          isImporting={data.isImporting}
+          message={data.importMessage}
+          onImport={data.importCsvReadings}
+        />
+        <ReportPanel
+          onExport={data.exportRunReport}
+          onExportHtml={data.exportRunReportHtml}
+          onExportPdf={data.exportRunReportPdf}
+          report={data.report}
+        />
+      </section>
+
+      <section className="content-grid page-card-full">
         <DemoControls
           currentRun={data.currentRun}
           isRunning={data.isDemoActionRunning}
@@ -58,11 +73,22 @@ export function Runs() {
           onSeed={data.seedDemo}
           scenarios={data.scenarios}
         />
-        <ReportPanel
-          onExport={data.exportRunReport}
-          onExportHtml={data.exportRunReportHtml}
-          report={data.report}
-        />
+        <aside className="info-panel">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Import rules</p>
+              <h2>CSV contract</h2>
+            </div>
+            <Database aria-hidden="true" />
+          </div>
+          <div className="explanation-list">
+            <p>
+              Required columns are timestamp, rpm, torque_nm, temperature_c,
+              vibration_mm_s, current_a, voltage_v, and pressure_bar.
+            </p>
+            <p>Optional columns are phase, fault_mode, rig_id, run_name, and description.</p>
+          </div>
+        </aside>
       </section>
 
       <section className="chart-card page-card-full">

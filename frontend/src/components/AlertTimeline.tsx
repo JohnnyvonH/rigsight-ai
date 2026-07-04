@@ -39,12 +39,16 @@ export function AlertTimeline({ alerts, isLoading, limit = 8 }: AlertTimelinePro
                   <dd>{alert.rig_id}</dd>
                 </div>
                 <div>
-                  <dt>Rule threshold</dt>
-                  <dd>{alert.threshold_value ?? "ML baseline"}</dd>
+                  <dt>Why this fired</dt>
+                  <dd>{alert.explanation || alert.message}</dd>
                 </div>
                 <div>
-                  <dt>ML agreement</dt>
-                  <dd>{alert.ml_is_anomaly ? "ML flagged this sample" : "Rules-only context"}</dd>
+                  <dt>Expected</dt>
+                  <dd>{alert.expected_range || "Baseline behavior"}</dd>
+                </div>
+                <div>
+                  <dt>Action</dt>
+                  <dd>{alert.recommended_action || "Review the linked reading."}</dd>
                 </div>
               </dl>
             ) : null}

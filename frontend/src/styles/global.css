@@ -157,12 +157,18 @@ p {
   text-transform: uppercase;
 }
 
-.overview-grid,
 .content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.45fr);
   gap: 18px;
   align-items: start;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+  gap: 18px;
+  align-items: stretch;
 }
 
 .content-grid--wide {
@@ -230,6 +236,11 @@ p {
 .fleet-panel,
 .walkthrough-panel {
   padding: 22px;
+}
+
+.overview-grid > .run-panel,
+.overview-grid > .status-panel {
+  min-height: 100%;
 }
 
 .fleet-panel {
@@ -333,7 +344,7 @@ p {
 .status-panel__header {
   justify-content: space-between;
   gap: 16px;
-  padding-bottom: 20px;
+  padding-bottom: 16px;
   border-bottom: 1px solid rgba(94, 111, 136, 0.16);
 }
 
@@ -349,7 +360,7 @@ p {
   display: block;
   margin-top: 6px;
   color: #138a63;
-  font-size: 2rem;
+  font-size: 1.45rem;
   line-height: 1;
 }
 
@@ -365,8 +376,8 @@ p {
 
 .status-panel dl {
   display: grid;
-  gap: 14px;
-  margin: 20px 0 0;
+  gap: 12px;
+  margin: 16px 0 0;
 }
 
 .status-panel dl div {
@@ -405,7 +416,7 @@ p {
   gap: 8px;
   width: 100%;
   min-height: 40px;
-  margin-top: 18px;
+  margin-top: 16px;
   border: 0;
   border-radius: 8px;
   background: #14213d;
@@ -509,6 +520,44 @@ p {
   display: grid;
   gap: 14px;
   margin: 0;
+}
+
+.run-panel--primary {
+  border-color: rgba(29, 126, 107, 0.28);
+  box-shadow: 0 20px 56px rgba(20, 33, 61, 0.08);
+}
+
+.run-panel--primary .section-heading h2 {
+  max-width: 720px;
+  font-size: 1.95rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  margin-top: 10px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(19, 138, 99, 0.11);
+  color: #126f52;
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.status-pill--pending {
+  background: rgba(94, 111, 136, 0.12);
+  color: #52627a;
+}
+
+.run-panel--primary dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 22px;
+}
+
+.run-panel--primary dl div {
+  min-height: 72px;
 }
 
 .info-panel {
@@ -627,6 +676,87 @@ p {
   color: #152238;
   font: inherit;
   font-weight: 760;
+}
+
+.field-control input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(94, 111, 136, 0.22);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #152238;
+  font: inherit;
+  font-weight: 760;
+}
+
+.threshold-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.file-drop-control {
+  display: grid;
+  min-height: 138px;
+  place-items: center;
+  gap: 8px;
+  padding: 20px;
+  border: 1px dashed rgba(94, 111, 136, 0.42);
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: #58677d;
+  font-weight: 850;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-drop-control svg {
+  width: 28px;
+  height: 28px;
+  color: #1f5b8c;
+}
+
+.file-drop-control input {
+  max-width: 100%;
+}
+
+.validation-panel {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 12px;
+  border-left: 4px solid #a34922;
+  border-radius: 8px;
+  background: #fff3ef;
+  color: #7a3217;
+  font-weight: 760;
+}
+
+.csv-preview-table {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.csv-preview-table div {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.7fr) minmax(80px, 0.5fr) minmax(90px, 0.5fr);
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid rgba(94, 111, 136, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.csv-preview-table span {
+  color: #66758a;
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.csv-preview-table strong {
+  color: #152238;
 }
 
 .filter-bar {
@@ -852,7 +982,7 @@ p {
 
 .alert-row dl {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(96px, 1fr));
   gap: 10px;
   margin: 0;
 }
@@ -1071,6 +1201,7 @@ p {
   .table-row,
   .fleet-scoreboard,
   .fleet-detail-grid,
+  .threshold-grid,
   .filter-bar,
   .alert-row {
     grid-template-columns: 1fr;
@@ -1105,6 +1236,7 @@ p {
   }
 
   .alert-row dl,
+  .run-panel--primary dl,
   .review-actions,
   .review-list,
   .table-row dl,

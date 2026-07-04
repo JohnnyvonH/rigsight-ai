@@ -1,10 +1,25 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: rigsight
+      POSTGRES_USER: rigsight
+      POSTGRES_PASSWORD: rigsight
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rigsight -d rigsight"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
   backend:
     build:
       context: ./backend
     environment:
       APP_ENV: development
-      DATABASE_URL: sqlite:///./rigsight.db
+      DATABASE_URL: ${DATABASE_URL:-sqlite:///./rigsight.db}
       BACKEND_CORS_ORIGINS: http://localhost:5173
     ports:
       - "8000:8000"

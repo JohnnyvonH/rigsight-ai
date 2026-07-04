@@ -15,7 +15,7 @@ export function StatusPanel({ error, health, isOnline, onRefresh, sampleCount }:
     <section className="status-panel" aria-live="polite">
       <div className="status-panel__header">
         <div>
-          <span>Backend health</span>
+          <span>System status</span>
           <strong>{isOnline ? "Online" : "Waiting"}</strong>
         </div>
         {isOnline ? <CheckCircle2 aria-hidden="true" /> : <RadioTower aria-hidden="true" />}

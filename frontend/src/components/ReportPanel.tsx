@@ -5,10 +5,11 @@ import type { RunReportResponse } from "../api/client";
 type ReportPanelProps = {
   onExport: () => void;
   onExportHtml: () => void;
+  onExportPdf: () => void;
   report: RunReportResponse | null;
 };
 
-export function ReportPanel({ onExport, onExportHtml, report }: ReportPanelProps) {
+export function ReportPanel({ onExport, onExportHtml, onExportPdf, report }: ReportPanelProps) {
   return (
     <section className="info-panel">
       <div className="section-heading">
@@ -36,6 +37,10 @@ export function ReportPanel({ onExport, onExportHtml, report }: ReportPanelProps
         <button className="action-button action-button--primary" onClick={onExportHtml} type="button">
           <Printer aria-hidden="true" />
           Open report
+        </button>
+        <button className="action-button" onClick={onExportPdf} type="button">
+          <Download aria-hidden="true" />
+          Download PDF
         </button>
         <button className="action-button" onClick={onExport} type="button">
           <Download aria-hidden="true" />

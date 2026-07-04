@@ -29,6 +29,11 @@ SQLITE_COMPAT_COLUMNS = {
     "alerts": {
         "organization_id": "TEXT NOT NULL DEFAULT 'demo-org'",
         "rig_id": "TEXT NOT NULL DEFAULT 'synthetic-rig-01'",
+        "explanation": "TEXT NOT NULL DEFAULT ''",
+        "recommended_action": "TEXT NOT NULL DEFAULT ''",
+        "triggered_metric": "TEXT NOT NULL DEFAULT ''",
+        "expected_range": "TEXT NOT NULL DEFAULT ''",
+        "actual_value": "TEXT NOT NULL DEFAULT ''",
         "assigned_to": "TEXT NOT NULL DEFAULT ''",
         "reviewed_by": "TEXT NOT NULL DEFAULT ''",
         "review_history": "TEXT NOT NULL DEFAULT '[]'",

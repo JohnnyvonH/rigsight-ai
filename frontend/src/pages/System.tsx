@@ -4,6 +4,7 @@ import logoUrl from "../assets/rig-sight-ai-logo.png";
 import { CameraPanel } from "../components/CameraPanel";
 import { DemoWalkthrough } from "../components/DemoWalkthrough";
 import { PageHeader } from "../components/PageHeader";
+import { ThresholdPanel } from "../components/ThresholdPanel";
 import { useRigSightData } from "../hooks/useRigSightData";
 
 const systemSections = [
@@ -64,7 +65,35 @@ export function System() {
 
       <section className="content-grid page-card-full">
         <CameraPanel cameraStatus={data.cameraStatus} />
+        <ThresholdPanel
+          currentRun={data.currentRun}
+          isRunning={data.isThresholdActionRunning}
+          message={data.thresholdActionMessage}
+          onRecalculate={data.recalculateCurrentRunAlerts}
+          onReset={data.resetCurrentThresholds}
+          onSave={data.updateCurrentThresholds}
+          thresholds={data.thresholds}
+        />
+      </section>
+
+      <section className="content-grid page-card-full">
         <DemoWalkthrough />
+        <aside className="info-panel">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Future auth</p>
+              <h2>SSO/RBAC boundary</h2>
+            </div>
+            <ShieldCheck aria-hidden="true" />
+          </div>
+          <div className="explanation-list">
+            <p>
+              The pilot keeps API-key context for ingestion and review actions. Full SSO,
+              customer identity mapping, and role enforcement remain deferred until a paid
+              customer requires them.
+            </p>
+          </div>
+        </aside>
       </section>
 
       <section className="system-grid">

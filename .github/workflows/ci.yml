@@ -58,6 +58,14 @@ jobs:
           curl --fail http://localhost:8000/camera/status
       - name: Smoke frontend
         run: curl --fail --retry 12 --retry-delay 5 --retry-all-errors http://localhost:5173
+      - name: Smoke Postgres profile
+        run: |
+          docker compose down
+          docker compose --profile postgres up -d postgres
+          until docker compose exec -T postgres pg_isready -U rigsight -d rigsight; do sleep 2; done
+          DATABASE_URL=postgresql+psycopg://rigsight:rigsight@postgres:5432/rigsight docker compose run --rm backend alembic upgrade head
+          DATABASE_URL=postgresql+psycopg://rigsight:rigsight@postgres:5432/rigsight docker compose up -d backend
+          curl --fail --retry 12 --retry-delay 5 --retry-all-errors http://localhost:8000/ready
       - name: Stop Docker services
         if: always()
         run: docker compose down

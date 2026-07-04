@@ -10,19 +10,28 @@ import {
   getReviewQueue,
   getRunReport,
   getRunReportHtmlUrl,
+  getRunReportPdfUrl,
+  getThresholds,
   getRuns,
+  ingestReadings,
+  recalculateRunAlerts,
+  resetThresholds,
   resetDemoData,
   seedDemoData,
+  updateThresholds,
   updateAlertReview,
   type AlertRecord,
   type AlertsResponse,
   type CameraStatusResponse,
   type DemoScenario,
   type HealthResponse,
+  type IngestRunRequest,
   type Reading,
   type ReviewStatus,
   type RunReportResponse,
   type TestRun,
+  type ThresholdProfile,
+  type ThresholdUpdate,
 } from "../api/client";
 import { formatLabel } from "../utils/format";
 
@@ -33,8 +42,11 @@ export type RigSightData = {
   currentRun: TestRun | null;
   demoActionMessage: string | null;
   error: string | null;
+  importCsvReadings: (payload: IngestRunRequest) => void;
+  importMessage: string | null;
   exportRunReport: () => void;
   exportRunReportHtml: () => void;
+  exportRunReportPdf: () => void;
   handleReview: (alertId: number, reviewStatus: ReviewStatus, assignedTo?: string) => void;
   health: HealthResponse | null;
   highSeverityCount: number;
@@ -42,17 +54,24 @@ export type RigSightData = {
   isLoading: boolean;
   isOnline: boolean;
   isDemoActionRunning: boolean;
+  isImporting: boolean;
+  isThresholdActionRunning: boolean;
   latestAlerts: AlertRecord[];
   latestFault: string | null;
   latestReading: Reading | null;
   loadTelemetry: (signal?: AbortSignal) => void;
   report: RunReportResponse | null;
   resetDemo: (scenario: string) => void;
+  recalculateCurrentRunAlerts: () => void;
   reviewQueue: AlertRecord[];
   reviewingAlertId: number | null;
   runs: TestRun[];
   scenarios: DemoScenario[];
   seedDemo: (scenario: string) => void;
+  thresholdActionMessage: string | null;
+  thresholds: ThresholdProfile | null;
+  updateCurrentThresholds: (payload: ThresholdUpdate) => void;
+  resetCurrentThresholds: () => void;
 };
 
 export function useRigSightData(): RigSightData {
@@ -69,7 +88,12 @@ export function useRigSightData(): RigSightData {
   const [report, setReport] = useState<RunReportResponse | null>(null);
   const [reviewingAlertId, setReviewingAlertId] = useState<number | null>(null);
   const [isDemoActionRunning, setIsDemoActionRunning] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isThresholdActionRunning, setIsThresholdActionRunning] = useState(false);
   const [demoActionMessage, setDemoActionMessage] = useState<string | null>(null);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
+  const [thresholdActionMessage, setThresholdActionMessage] = useState<string | null>(null);
+  const [thresholds, setThresholds] = useState<ThresholdProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -122,6 +146,16 @@ export function useRigSightData(): RigSightData {
       });
   }, []);
 
+  const loadThresholds = useCallback((rigId: string, signal?: AbortSignal) => {
+    getThresholds(rigId, { signal })
+      .then((result) => setThresholds(result.thresholds))
+      .catch((thresholdError: Error) => {
+        if (thresholdError.name !== "AbortError") {
+          setError(thresholdError.message);
+        }
+      });
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -131,6 +165,12 @@ export function useRigSightData(): RigSightData {
       controller.abort();
     };
   }, [loadTelemetry]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadThresholds(currentRun?.rig_id ?? "synthetic-rig-01", controller.signal);
+    return () => controller.abort();
+  }, [currentRun?.rig_id, loadThresholds]);
 
   const highSeverityCount = useMemo(
     () => alerts.filter((alert) => alert.severity === "high").length,
@@ -220,6 +260,78 @@ export function useRigSightData(): RigSightData {
     window.open(getRunReportHtmlUrl(currentRun.id), "_blank", "noopener,noreferrer");
   }, [currentRun]);
 
+  const exportRunReportPdf = useCallback(() => {
+    if (!currentRun) {
+      setError("No current run is available to export.");
+      return;
+    }
+    window.open(getRunReportPdfUrl(currentRun.id), "_blank", "noopener,noreferrer");
+  }, [currentRun]);
+
+  const importCsvReadings = useCallback(
+    (payload: IngestRunRequest) => {
+      setIsImporting(true);
+      setImportMessage(null);
+      ingestReadings(payload)
+        .then((result) => {
+          setImportMessage(
+            `Imported ${result.readings_created} readings and created ${result.alerts_created} alerts for ${result.run.name}.`,
+          );
+          loadTelemetry();
+          loadThresholds(result.run.rig_id);
+        })
+        .catch((importError: Error) => setError(importError.message))
+        .finally(() => setIsImporting(false));
+    },
+    [loadTelemetry, loadThresholds],
+  );
+
+  const updateCurrentThresholds = useCallback(
+    (payload: ThresholdUpdate) => {
+      setIsThresholdActionRunning(true);
+      setThresholdActionMessage(null);
+      updateThresholds(payload)
+        .then((result) => {
+          setThresholds(result.thresholds);
+          setThresholdActionMessage("Threshold profile saved.");
+        })
+        .catch((thresholdError: Error) => setError(thresholdError.message))
+        .finally(() => setIsThresholdActionRunning(false));
+    },
+    [],
+  );
+
+  const resetCurrentThresholds = useCallback(() => {
+    const rigId = currentRun?.rig_id ?? thresholds?.rig_id ?? "synthetic-rig-01";
+    setIsThresholdActionRunning(true);
+    setThresholdActionMessage(null);
+    resetThresholds(rigId)
+      .then((result) => {
+        setThresholds(result.thresholds);
+        setThresholdActionMessage("Threshold profile reset to defaults.");
+      })
+      .catch((thresholdError: Error) => setError(thresholdError.message))
+      .finally(() => setIsThresholdActionRunning(false));
+  }, [currentRun?.rig_id, thresholds?.rig_id]);
+
+  const recalculateCurrentRunAlerts = useCallback(() => {
+    if (!currentRun) {
+      setError("No current run is available for alert recalculation.");
+      return;
+    }
+    setIsThresholdActionRunning(true);
+    setThresholdActionMessage(null);
+    recalculateRunAlerts(currentRun.id)
+      .then((result) => {
+        setThresholdActionMessage(
+          `Recalculated ${result.rules_count} rules alerts; preserved ${result.ml_count} ML alerts.`,
+        );
+        loadTelemetry();
+      })
+      .catch((thresholdError: Error) => setError(thresholdError.message))
+      .finally(() => setIsThresholdActionRunning(false));
+  }, [currentRun, loadTelemetry]);
+
   return {
     alertSummary,
     alerts,
@@ -227,8 +339,11 @@ export function useRigSightData(): RigSightData {
     currentRun,
     demoActionMessage,
     error,
+    importCsvReadings,
+    importMessage,
     exportRunReport,
     exportRunReportHtml,
+    exportRunReportPdf,
     handleReview,
     health,
     highSeverityCount,
@@ -236,16 +351,23 @@ export function useRigSightData(): RigSightData {
     isLoading,
     isOnline,
     isDemoActionRunning,
+    isImporting,
+    isThresholdActionRunning,
     latestAlerts,
     latestFault,
     latestReading,
     loadTelemetry,
     report,
+    recalculateCurrentRunAlerts,
     resetDemo: (scenario: string) => runDemoAction("reset", scenario),
     reviewQueue,
     reviewingAlertId,
     runs,
     scenarios,
     seedDemo: (scenario: string) => runDemoAction("seed", scenario),
+    thresholdActionMessage,
+    thresholds,
+    updateCurrentThresholds,
+    resetCurrentThresholds,
   };
 }
